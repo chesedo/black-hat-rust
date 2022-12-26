@@ -45,7 +45,7 @@ fn main() -> Result<()> {
                 println!(" {}", port.port);
             }
 
-            println!("");
+            println!();
         }
     });
 

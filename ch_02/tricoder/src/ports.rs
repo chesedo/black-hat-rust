@@ -21,7 +21,7 @@ fn scan_port(hostname: &str, port: u16) -> Port {
         .to_socket_addrs()
         .expect("port scanner: Creating socket address")
         .collect();
-    if socket_addresses.len() == 0 {
+    if socket_addresses.is_empty() {
         return Port {
             port,
             is_open: false,

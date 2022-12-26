@@ -36,5 +36,5 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    return Ok(());
+    Ok(())
 }
