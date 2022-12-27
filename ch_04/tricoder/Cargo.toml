@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.68"
 async-trait = "0.1.60"
-clap = { version = "4.0.32", features = ["cargo"] }
+clap = { version = "4.0.32", features = ["derive"] }
 futures = "0.3.25"
 regex = "1.7.0"
 reqwest = { version = "0.11.13", default-features = false, features = ["json", "rustls-tls"] }

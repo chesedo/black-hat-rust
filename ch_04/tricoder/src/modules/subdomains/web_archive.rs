@@ -5,7 +5,7 @@ use crate::{
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use tracing::error;
+use tracing::{debug, error};
 use url::Url;
 
 pub struct WebArchive {}
@@ -49,6 +49,7 @@ impl SubdomainModule for WebArchive {
             .into_iter()
             .flatten()
             .filter_map(|url| {
+                debug!(url, "parsing web archive url");
                 Url::parse(&url)
                     .map_err(|err| {
                         error!("{}: error parsing url: {}", self.name(), err);

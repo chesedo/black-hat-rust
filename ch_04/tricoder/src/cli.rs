@@ -10,23 +10,20 @@ use tracing::error;
 use tracing::info;
 
 use crate::dns;
-use crate::modules::HttpModule;
+use crate::modules::Module;
 use crate::modules::Subdomain;
 use crate::ports;
 use crate::{modules, Error};
 
 pub fn modules() {
-    let http_modules = modules::all_http_modules();
-    let subdomains_modules = modules::all_subdomains_modules();
+    print("Subdomains modules", modules::all_subdomains_modules());
+    print("HTTP modules", modules::all_http_modules());
+}
 
-    println!("Subdomains modules");
-    for module in subdomains_modules {
+fn print<M: Module + ?Sized>(heading: &str, modules: Vec<Box<M>>) {
+    println!("{heading}");
+    for module in modules {
         println!("   {}: {}", module.name(), module.description());
-    }
-
-    println!("HTTP modules");
-    for module in http_modules {
-        println!("    {}: {}", module.name(), module.description());
     }
 }
 
@@ -112,42 +109,31 @@ pub fn scan(target: &str) -> Result<(), Error> {
         println!("---------------------- Vulnerabilities ----------------------");
 
         // 5th step: concurrently scan vulnerabilities
-        let mut targets: Vec<(Box<dyn HttpModule>, String)> = Vec::new();
-        for subdomain in subdomains {
-            for port in subdomain.open_ports {
-                let http_modules = modules::all_http_modules();
-                for http_module in http_modules {
-                    let target = format!("http://{}:{}", &subdomain.domain, port.port);
-                    targets.push((http_module, target));
-                }
-            }
-        }
-
-        // stream::iter(subdomains.into_iter())
-        //     .map(|domain| {
-        //         domain
-        //             .open_ports
-        //             .iter()
-        //             .map(|port| format!("http://{}:{}", &domain.domain, port.port))
-        //             .collect::<Vec<String>>()
-        //     })
-        //     .map(|targets| {
-        //         stream::iter(targets.into_iter().map(|target| {
-        //             let http_modules = modules::all_http_modules();
-        //             return (http_modules, target);
-        //         }))
-        //     })
-        //     .flatten()
-        //     .map(|(modules, target)| {
-        //         stream::iter(modules.into_iter().map(move |module| {
-        //             return (module, target.clone());
-        //         }))
-        //     })
-        //     .flatten()
-        stream::iter(targets.into_iter())
+        stream::iter(subdomains.into_iter())
+            .map(|domain| {
+                domain
+                    .open_ports
+                    .iter()
+                    .map(|port| format!("http://{}:{}", &domain.domain, port.port))
+                    .collect::<Vec<String>>()
+            })
+            .map(|targets| {
+                stream::iter(targets.into_iter().map(|target| {
+                    let http_modules = modules::all_http_modules();
+                    return (http_modules, target);
+                }))
+            })
+            .flatten()
+            .map(|(modules, target)| {
+                stream::iter(modules.into_iter().map(move |module| {
+                    return (module, target.clone());
+                }))
+            })
+            .flatten()
             .for_each_concurrent(vulnerabilities_conccurency, |(module, target)| {
                 let http_client = http_client.clone();
                 async move {
+                    info!("Running {} for {}", module.name(), target);
                     match module.scan(&http_client, &target).await {
                         Ok(Some(finding)) => println!("{:?}", &finding),
                         Ok(None) => {}
