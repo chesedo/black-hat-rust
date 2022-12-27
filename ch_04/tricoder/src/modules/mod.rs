@@ -6,7 +6,7 @@ mod http;
 mod subdomains;
 
 pub fn all_http_modules() -> Vec<Box<dyn HttpModule>> {
-    return vec![
+    vec![
         Box::new(http::DsStoreDisclosure::new()),
         Box::new(http::DotEnvDisclosure::new()),
         Box::new(http::DirectoryListingDisclosure::new()),
@@ -21,14 +21,14 @@ pub fn all_http_modules() -> Vec<Box<dyn HttpModule>> {
         Box::new(http::Cve2017_9506::new()),
         Box::new(http::Cve2018_7600::new()),
         Box::new(http::ElasticsearchUnauthenticatedAccess::new()),
-    ];
+    ]
 }
 
 pub fn all_subdomains_modules() -> Vec<Box<dyn SubdomainModule>> {
-    return vec![
+    vec![
         Box::new(subdomains::Crtsh::new()),
         Box::new(subdomains::WebArchive::new()),
-    ];
+    ]
 }
 
 pub trait Module {

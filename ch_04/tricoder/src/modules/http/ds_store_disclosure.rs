@@ -19,7 +19,7 @@ impl DsStoreDisclosure {
 
         let signature = [0x0, 0x0, 0x0, 0x1, 0x42, 0x75, 0x64, 0x31];
 
-        return content[0..8] == signature;
+        content[0..8] == signature
     }
 }
 
@@ -48,7 +48,7 @@ impl HttpModule for DsStoreDisclosure {
         }
 
         let body = res.bytes().await?;
-        if self.is_ds_store_file(&body.as_ref()) {
+        if self.is_ds_store_file(body.as_ref()) {
             return Ok(Some(HttpFinding::DsStoreFileDisclosure(url)));
         }
 

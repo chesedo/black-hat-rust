@@ -13,11 +13,11 @@ impl GitDirectoryDisclosure {
     }
 
     fn is_git_directory_listing(&self, content: &str) -> bool {
-        return content.contains("HEAD")
+        content.contains("HEAD")
             && content.contains("refs")
             && content.contains("config")
             && content.contains("index")
-            && content.contains("objects");
+            && content.contains("objects")
     }
 }
 

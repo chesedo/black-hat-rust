@@ -46,7 +46,7 @@ impl HttpModule for Cve2018_7600 {
         ];
         let query_params = [
             ("name[#type]", "markup"),
-            ("name[#markup]", &(token.clone())),
+            ("name[#markup]", token),
             ("name[#post_render][]", "printf"),
             ("q", "user/password"),
         ];
@@ -76,7 +76,7 @@ impl HttpModule for Cve2018_7600 {
 
                 let body = res.text().await?;
 
-                if body.contains(&token) {
+                if body.contains(token) {
                     return Ok(Some(HttpFinding::Cve2018_7600(url)));
                 }
             }

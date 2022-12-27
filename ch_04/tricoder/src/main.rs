@@ -29,12 +29,12 @@ fn main() -> Result<()> {
         .arg_required_else_help(true)
         .get_matches();
 
-    if let Some(_) = cli.subcommand_matches("modules") {
+    if cli.subcommand_matches("modules").is_some() {
         cli::modules();
     } else if let Some(matches) = cli.subcommand_matches("scan") {
         // we can safely unwrap as the argument is required
         let target = matches.get_one::<String>("target").unwrap();
-        cli::scan(&target)?;
+        cli::scan(target)?;
     }
 
     Ok(())

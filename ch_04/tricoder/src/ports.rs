@@ -14,7 +14,7 @@ pub async fn scan_ports(concurrency: usize, mut subdomain: Subdomain) -> Subdoma
         .expect("port scanner: Creating socket address");
 
     if let Some(socket_address) = socket_addresses.next() {
-        subdomain.open_ports = stream::iter(MOST_COMMON_PORTS_100.into_iter())
+        subdomain.open_ports = stream::iter(MOST_COMMON_PORTS_100.iter())
             .map(|port| async move {
                 let port = scan_port(socket_address, *port).await;
                 if port.is_open {

@@ -30,7 +30,7 @@ impl HttpModule for KibanaUnauthenticatedAccess {
         http_client: &Client,
         endpoint: &str,
     ) -> Result<Option<HttpFinding>, Error> {
-        let url = format!("{}", &endpoint);
+        let url = endpoint.to_string();
         let res = http_client.get(&url).send().await?;
 
         if !res.status().is_success() {
