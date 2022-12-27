@@ -1,5 +1,5 @@
 [workspace]
 members = [
     "ch_01/sha1_cracker",
-    "ch_03/tricoder",
+    "ch_04/tricoder",
 ]
